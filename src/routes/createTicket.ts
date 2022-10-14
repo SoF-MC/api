@@ -16,8 +16,7 @@ const route: AppRoute = {
         AppRouter.registerRoute<{}>(this, app);
     },
     run: async (req: FastifyRequest<{ Headers: DefaultHeaders, Body: TicketCreateRequestBody }>, res) => {
-        const user: UserData | undefined = UserDataEncoder.decodeUserData(req.headers.authorisation);
-        if (!user) return res.status(404);
+        const user: UserData = UserDataEncoder.decodeUserData(req.headers.authorisation) as UserData;
         if (!await TicketsDatabase.findTicketByUser(user.id)) {
             await client.ticketManager.createTicket(user.id, req.body);
             return res.status(200);

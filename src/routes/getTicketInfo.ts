@@ -10,8 +10,7 @@ const route: AppRoute = {
     },
     run: async (req: FastifyRequest<{ Headers: DefaultHeaders }>, res) => {
         const { authorisation } = req.headers;
-        const user: UserData | undefined = UserDataEncoder.decodeUserData(authorisation);
-        if (!user) return res.status(404)
+        const user: UserData = UserDataEncoder.decodeUserData(authorisation) as UserData;
         const ticket = await TicketsDatabase.findTicketByUser(user.id);
         if (!ticket) return res.status(404);
         console.log(ticket)
