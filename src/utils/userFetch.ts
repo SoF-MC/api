@@ -1,6 +1,6 @@
-import axios from "axios"
+import { UserData, DiscordRawApiData } from "../types";
 import config from "../../config"
-import { UserData, DiscordRawApiData } from '../types';
+import axios from "axios"
 
 export default class DiscordUsers {
     private static cache: Map<string, UserData> = new Map();
