@@ -1,8 +1,8 @@
 import fastify, { FastifyInstance } from "fastify";
+import { AppOptions, AppRoute } from "./types";
 import { readdirSync } from "fs";
 import config from "../config";
-import AppRouter from "./router";
-import { AppOptions, AppRoute } from "./types";
+import start from "./bot";
 
 export default class App {
     private constructor() { }
@@ -13,19 +13,18 @@ export default class App {
     public static start(options: AppOptions) {
         this.options = options;
         this.app = fastify();
-        this.registerRoutes()
-        this.app.listen({ port: config.port })
-        console.log(`Started on http://localhost:${config.port}`)
-    }
+        this.registerRoutes();
+        this.app.listen({ port: config.port });
+        start();
+        console.log(`Started on http://localhost:${config.port}`);
+    };
 
     private static registerRoutes() {
-        readdirSync(__dirname + "/routes").forEach(
-            async (fileName) => {
-                const file = (await import(`./routes/${fileName}`)).default as AppRoute;
-                AppRouter.registerRoute(file, this.app)
-            }
-        )
-    }
-}
+        readdirSync(__dirname + "/routes").forEach(async (fileName) => {
+            const file = (await import(`./routes/${fileName}`)).default as AppRoute;
+            file.register(this.app);
+        });
+    };
+};
 
-App.start({})
+App.start({});
